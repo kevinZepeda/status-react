@@ -219,12 +219,12 @@ class StatusModule extends ReactContextBaseJavaModule implements LifecycleEventL
 
             JSONObject jsonConfig = new JSONObject(config);
 
-            String gethLogFilePath = TextUtils.isEmpty(this.logLevel) ? null : prepareLogsFile();
+            String gethLogFilePath = TextUtils.isEmpty(this.logLevel) ? prepareLogsFile() : prepareLogsFile();
             boolean logsEnabled = (gethLogFilePath != null);
 
             jsonConfig.put("LogEnabled", logsEnabled);
             jsonConfig.put("LogFile", gethLogFilePath);
-            jsonConfig.put("LogLevel", TextUtils.isEmpty(this.logLevel) ? "ERROR" : this.logLevel.toUpperCase());
+            jsonConfig.put("LogLevel", TextUtils.isEmpty(this.logLevel) ? "DEBUG" : this.logLevel.toUpperCase());
             jsonConfig.put("DataDir", dataDir);
             jsonConfig.put("NetworkId", customConfig.get("NetworkId"));
             try {
@@ -260,6 +260,7 @@ class StatusModule extends ReactContextBaseJavaModule implements LifecycleEventL
             jsonConfig.put("KeyStoreDir", newKeystoreDir);
 
             config = jsonConfig.toString();
+            Log.d(TAG, "CONFIG " + config);
         } catch (JSONException e) {
             config = Statusgo.GenerateConfig(testnetDataDir, testnetNetworkId);
             Log.d(TAG, "Something went wrong " + e.getMessage());
