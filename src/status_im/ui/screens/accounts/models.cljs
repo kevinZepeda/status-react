@@ -66,7 +66,8 @@
     (log/debug "account-created")
     (when-not (str/blank? pubkey)
       (-> (add-account db account)
-          (assoc :dispatch [:login-account normalized-address password])))))
+          ;; TASK (igorm) -> maybe save it immediately?
+          (assoc :dispatch [:login-account normalized-address password false])))))
 
 (defn load-accounts [{:keys [db all-accounts]}]
   (let [accounts (->> all-accounts

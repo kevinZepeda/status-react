@@ -2,6 +2,7 @@
   (:require-macros [status-im.utils.views :refer [defview letsubs]])
   (:require [clojure.string :as string]
             [status-im.ui.screens.accounts.styles :as ast]
+            [status-im.ui.components.checkbox.view :as checkbox]
             [status-im.ui.components.text-input.view :as text-input]
             [status-im.ui.components.status-bar.view :as status-bar]
             [status-im.ui.components.toolbar.view :as toolbar]
@@ -23,9 +24,9 @@
      [toolbar/nav-button act/default-back])
    [toolbar/content-title (i18n/label :t/sign-in-to-status)]])
 
-(defn login-account [password-text-input address password]
+(defn login-account [password-text-input address password save-password]
   (.blur password-text-input)
-  (re-frame/dispatch [:login-account address password]))
+  (re-frame/dispatch [:login-account address password save-password]))
 
 (defn- error-key [error]
   ;; TODO Improve selection logic when status-go provide an error code
@@ -49,7 +50,7 @@
      name]]])
 
 (defview login []
-  (letsubs [{:keys [address photo-path name password error processing]} [:get :accounts/login]
+  (letsubs [{:keys [address photo-path name password error processing save-password]} [:get :accounts/login]
             can-navigate-back? [:can-navigate-back?]
             password-text-input (atom nil)]
     [react/keyboard-avoiding-view {:style ast/accounts-view}
@@ -70,7 +71,13 @@
                                 (re-frame/dispatch [:set-in [:accounts/login :password] %])
                                 (re-frame/dispatch [:set-in [:accounts/login :error] ""]))
           :secure-text-entry true
-          :error             (when (pos? (count error)) (i18n/label (error-key error)))}]]]]
+          :error             (when (pos? (count error)) (i18n/label (error-key error)))}]]
+       [react/view styles/password-container
+        [checkbox/checkbox {:checked? save-password
+                            :on-value-change #(re-frame/dispatch [:set-in 
+                                                                  [:accounts/login :save-password] 
+                                                                  %])}]
+        [react/text {:numberOfLines 1} "save password"]]]]
      (when processing
        [react/view styles/processing-view
         [components/activity-indicator {:animating true}]
@@ -86,4 +93,4 @@
          {:forward?  true
           :label     (i18n/label :t/sign-in)
           :disabled? (not (spec/valid? ::db/password password))
-          :on-press  #(login-account @password-text-input address password)}]])]))
+          :on-press  #(login-account @password-text-input address password save-password)}]])]))

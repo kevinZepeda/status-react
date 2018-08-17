@@ -42,14 +42,14 @@
                      :name name)
    :dispatch [:navigate-to :login]})
 
-(defn wrap-with-login-account-fx [db address password]
+(defn wrap-with-login-account-fx [db address password save-password]
   {:db    db
-   :login [address password]})
+   :login [address password save-password]})
 
-(defn login-account-internal [address password {db :db}]
+(defn login-account-internal [address password save-password {db :db}]
   (wrap-with-login-account-fx
    (assoc db :node/after-start nil)
-   address password))
+   address password save-password))
 
 (defn- add-custom-bootnodes [config network all-bootnodes]
   (let [bootnodes (as-> all-bootnodes $
@@ -77,17 +77,17 @@
      :network              network
      :config               config}))
 
-(defn- wrap-with-initialize-geth-fx [db address password]
+(defn- wrap-with-initialize-geth-fx [db address password save-password]
   (let [{:keys [network config]} (get-network-by-address db address)]
     {:initialize-geth-fx config
      :db                 (assoc db
                                 :network network
-                                :node/after-start [:login-account-internal address password])}))
+                                :node/after-start [:login-account-internal address password save-password])}))
 
-(defn start-node [address password {db :db}]
+(defn start-node [address password save-password {db :db}]
   (wrap-with-initialize-geth-fx
    (assoc db :node/after-stop nil)
-   address password))
+   address password save-password))
 
 (defn- wrap-with-stop-node-fx [db address password]
   {:db        (assoc db :node/after-stop [:start-node address password])
@@ -98,7 +98,7 @@
       (and config/bootnodes-settings-enabled?
            use-custom-bootnodes)))
 
-(defn login-account [address password {{:keys [network status-node-started?] :as db} :db}]
+(defn login-account [address password save-password {{:keys [network status-node-started?] :as db} :db}]
   (let [{use-custom-bootnodes :use-custom-bootnodes
          account-network :network} (get-network-by-address db address)
         db'     (-> db
@@ -113,7 +113,7 @@
 
                       :else
                       wrap-with-stop-node-fx)]
-    (wrap-fn db' address password)))
+    (wrap-fn db' address password save-password)))
 
 (defn login-handler [login-result address {db :db}]
   (let [data    (types/json->clj login-result)

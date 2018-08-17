@@ -47,7 +47,7 @@
     (when-not (string/blank? public-key)
       (-> db
           (accounts.models/add-account account)
-          (assoc :dispatch [:login-account address password])
+          (assoc :dispatch [:login-account address password false])
           (assoc :dispatch-later [{:ms 2000 :dispatch [:account-recovered-navigate]}])))))
 
 (defn account-recovered-navigate [{:keys [db]}]

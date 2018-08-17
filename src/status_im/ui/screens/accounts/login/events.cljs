@@ -31,18 +31,18 @@
 
 (handlers/register-handler-fx
  :login-account-internal
- (fn [cofx [_ address password]]
+ (fn [cofx [_ address password save-password]]
    (models/login-account-internal address password cofx)))
 
 (handlers/register-handler-fx
  :start-node
- (fn [cofx [_ address password]]
-   (models/start-node address password cofx)))
+ (fn [cofx [_ address password save-password]]
+   (models/start-node address password save-password cofx)))
 
 (handlers/register-handler-fx
  :login-account
- (fn [cofx [_ address password]]
-   (models/login-account address password cofx)))
+ (fn [cofx [_ address password save-password]]
+   (models/login-account address password save-password cofx)))
 
 (handlers/register-handler-fx
  :login-handler

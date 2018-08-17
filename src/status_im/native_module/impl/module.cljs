@@ -97,9 +97,9 @@
   (when status
     (call-module #(.recoverAccount status passphrase password on-result))))
 
-(defn login [address password on-result]
+(defn login [address password save-password on-result]
   (when status
-    (call-module #(.login status address password on-result))))
+    (call-module #(.login status address password save-password on-result))))
 
 (defn approve-sign-request
   [id password callback]

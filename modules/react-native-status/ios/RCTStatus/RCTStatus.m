@@ -2,6 +2,7 @@
 #import "ReactNativeConfig.h"
 #import "React/RCTBridge.h"
 #import "React/RCTEventDispatcher.h"
+#import "RCTStatusCachedPassword.h"
 #import <Statusgo/Statusgo.h>
 
 @interface NSDictionary (BVJSONString)
@@ -160,6 +161,25 @@ RCT_EXPORT_METHOD(startNode:(NSString *)configString) {
                        char *res = StartNode((char *) [resultingConfig UTF8String]);
                        NSLog(@"StartNode result %@", [NSString stringWithUTF8String: res]);                   });
 }
+////////////////////////////////////////////////////////////////////
+#pragma mark - quickLogin
+//////////////////////////////////////////////////////////////////// shouldMoveToInternalStorage
+RCT_EXPORT_METHOD(isQuickLoginAvailable:(RCTResponseSenderBlock)onResultCallback) {
+    onResultCallback(@[@(YES)]);
+}
+
+RCT_EXPORT_METHOD(quickLogin:(NSString *)address
+                  callback:(RCTResponseSenderBlock)callback) {
+
+    NSString *password = [RCTStatusCachedPassword retrieve];
+    if (password == nil) {
+        callback(@[[NSNull null]]);
+        return;
+    }
+
+    char * result = Login((char *) [address UTF8String], (char *) [password UTF8String]);
+    callback(@[[NSString stringWithUTF8String: result]]);
+}
 
 ////////////////////////////////////////////////////////////////////
 #pragma mark - shouldMoveToInternalStorage
@@ -242,11 +262,18 @@ RCT_EXPORT_METHOD(recoverAccount:(NSString *)passphrase
 //////////////////////////////////////////////////////////////////// login
 RCT_EXPORT_METHOD(login:(NSString *)address
                   password:(NSString *)password
+                  savePassword:(NSString *)savePassword
                   callback:(RCTResponseSenderBlock)callback) {
 #if DEBUG
     NSLog(@"Login() method called");
 #endif
     char * result = Login((char *) [address UTF8String], (char *) [password UTF8String]);
+
+    if (savePassword) {
+        NSLog(@"IGORM -> Storing password");
+        [RCTStatusCachedPassword store:password];
+    }
+
     callback(@[[NSString stringWithUTF8String: result]]);
 }
 

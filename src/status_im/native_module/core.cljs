@@ -18,8 +18,8 @@
 (defn recover-account [passphrase password callback]
   (native-module/recover-account passphrase password callback))
 
-(defn login [address password callback]
-  (native-module/login address password callback))
+(defn login [address password save-password callback]
+  (native-module/login address password save-password callback))
 
 (defn approve-sign-request [id password callback]
   (native-module/approve-sign-request id password callback))
