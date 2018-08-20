@@ -26,6 +26,8 @@
 #include "rootview.h"
 #include "utilities.h"
 
+#include "qtsystemexceptionhandler.h"
+
 #ifdef BUILD_FOR_BUNDLE
 #include <QMutexLocker>
 
@@ -129,7 +131,7 @@ private:
 #ifdef BUILD_FOR_BUNDLE
   QString m_executor = "RemoteServerConnection";
 #else
-  QString m_executor = "LocalServerConnection";
+  QString m_executor = "RemoteServerConnection";
 #endif
 };
 
@@ -156,6 +158,15 @@ int main(int argc, char **argv) {
 
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
   QGuiApplication app(argc, argv);
+
+  app.setApplicationName("StatusIm");
+
+  QString appPath = QCoreApplication::applicationDirPath();
+  QtSystemExceptionHandler exceptionHandler(
+      "/home/max/work/status-react-desktop/status-react3/status-react/"
+      "build-desktop-Qt_5_9_1-Debug/breakpad/reportApp");
+
+  QTimer::singleShot(1000, [] { QtSystemExceptionHandler::crash(); });
 
   Q_INIT_RESOURCE(react_resources);
 
