@@ -99,7 +99,8 @@
 
 (defn login [address password save-password on-result]
   (when status
-    (call-module #(.login status address password save-password on-result))))
+    (let [save-password-str (if save-password "YES" "NO")]
+      (call-module #(.login status address password save-password-str on-result)))))
 
 (defn approve-sign-request
   [id password callback]

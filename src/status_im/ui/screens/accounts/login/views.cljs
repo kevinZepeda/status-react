@@ -49,6 +49,9 @@
                  :numberOfLines 1}
      name]]])
 
+(defn try-quick-login []
+  (letsubs [{:keys [address password error processing save-password]} [:get :accounts/login]]))
+
 (defview login []
   (letsubs [{:keys [address photo-path name password error processing save-password]} [:get :accounts/login]
             can-navigate-back? [:can-navigate-back?]
@@ -74,8 +77,8 @@
           :error             (when (pos? (count error)) (i18n/label (error-key error)))}]]
        [react/view styles/password-container
         [checkbox/checkbox {:checked? save-password
-                            :on-value-change #(re-frame/dispatch [:set-in 
-                                                                  [:accounts/login :save-password] 
+                            :on-value-change #(re-frame/dispatch [:set-in
+                                                                  [:accounts/login :save-password]
                                                                   %])}]
         [react/text {:numberOfLines 1} "save password"]]]]
      (when processing

@@ -10,8 +10,8 @@
 
 (re-frame/reg-fx
  :login
- (fn [[address password]]
-   (models/login! address password)))
+ (fn [[address password save-password]]
+   (models/login! address password save-password)))
 
 (re-frame/reg-fx
  :clear-web-data

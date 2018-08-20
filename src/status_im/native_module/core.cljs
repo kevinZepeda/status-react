@@ -65,3 +65,6 @@
 
 (defn get-device-UUID [callback]
   (native-module/get-device-UUID callback))
+
+(defn get-saved-password [callback]
+  (callback "mcpmcp"))

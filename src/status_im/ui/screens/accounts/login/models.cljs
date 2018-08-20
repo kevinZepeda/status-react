@@ -14,8 +14,8 @@
 
 (defn stop-node! [] (status/stop-node))
 
-(defn login! [address password]
-  (status/login address password #(re-frame/dispatch [:login-handler % address])))
+(defn login! [address password save-password]
+  (status/login address password save-password #(re-frame/dispatch [:login-handler % address])))
 
 (defn clear-web-data! []
   (status/clear-web-data))
