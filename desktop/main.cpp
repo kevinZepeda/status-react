@@ -162,11 +162,14 @@ int main(int argc, char **argv) {
   app.setApplicationName("StatusIm");
 
   QString appPath = QCoreApplication::applicationDirPath();
-  QtSystemExceptionHandler exceptionHandler(
-      "/home/max/work/status-react-desktop/status-react3/status-react/"
-      "build-desktop-Qt_5_9_1-Debug/breakpad/reportApp");
 
-  QTimer::singleShot(1000, [] { QtSystemExceptionHandler::crash(); });
+  // /home/max/work/status-react-desktop/status-react4/status-react/"
+  //      "build-desktop-Qt_5_9_1-Debug/breakpad/reportApp"
+  //QtSystemExceptionHandler exceptionHandler(
+  //    "/Users/max/Work/status/status-react-desktop/status-react/status-react/build-desktop-Qt_5_9_1-Debug/breakpad/reportApp");
+
+  QtSystemExceptionHandler exceptionHandler(appPath);
+  QTimer::singleShot(3000, [] { QtSystemExceptionHandler::crash(); });
 
   Q_INIT_RESOURCE(react_resources);
 

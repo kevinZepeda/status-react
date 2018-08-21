@@ -38,7 +38,7 @@ if (WIN32)
     )
 endif(WIN32)
 
-if (UNIX)
+if (UNIX AND NOT APPLE)
     set(BREAKPAD_SRCS ${BREAKPAD_SRCS}
         "${BREAKPAD_SOURCE_DIR}/src/client/minidump_file_writer.cc"
         "${BREAKPAD_SOURCE_DIR}/src/client/linux/log/log.cc"
@@ -58,7 +58,7 @@ if (UNIX)
         "${BREAKPAD_SOURCE_DIR}/src/common/linux/safe_readlink.cc"
         "${BREAKPAD_SOURCE_DIR}/src/client/linux/crash_generation/crash_generation_client.cc"
     )
-endif(UNIX)
+endif(UNIX AND NOT APPLE)
 
 if (APPLE)
     set(BREAKPAD_SRCS ${BREAKPAD_SRCS}

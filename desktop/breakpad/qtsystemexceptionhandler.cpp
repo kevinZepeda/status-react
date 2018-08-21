@@ -90,8 +90,12 @@ static bool exceptionHandlerCallback(const char *dump_dir,
   qWarning() << "[execute crash handler]"
              << QtSystemExceptionHandler::crashHandlerPath();
   qWarning() << argumentList;
-  return !QProcess::execute(QtSystemExceptionHandler::crashHandlerPath(),
+  QProcess::startDetached(QtSystemExceptionHandler::crashHandlerPath(),
                             argumentList);
+
+  // Return false to trigger native default crash handler on MacOS
+  return false;
+
 }
 #elif defined(Q_OS_WIN)
 static bool exceptionHandlerCallback(const wchar_t *dump_path,
@@ -156,9 +160,13 @@ QtSystemExceptionHandler::QtSystemExceptionHandler(const QString &libexecPath)
   init(libexecPath);
 }
 #elif defined(Q_OS_MACOS)
+bool filterCallback(void *context) {
+    // Use custom System crash handler on MacOS
+    return true;
+}
 QtSystemExceptionHandler::QtSystemExceptionHandler(const QString &libexecPath)
     : exceptionHandler(new google_breakpad::ExceptionHandler(
-          QDir::tempPath().toStdString(), NULL, exceptionHandlerCallback, NULL,
+          QDir::tempPath().toStdString(), filterCallback, exceptionHandlerCallback, NULL,
           true, NULL)) {
   init(libexecPath);
 }
