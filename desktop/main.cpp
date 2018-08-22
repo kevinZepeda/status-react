@@ -156,6 +156,8 @@ void loadFontsFromResources() {
 
 int main(int argc, char **argv) {
 
+  //QtSystemExceptionHandler exceptionHandler("");
+
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
   QGuiApplication app(argc, argv);
 

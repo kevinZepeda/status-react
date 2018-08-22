@@ -12,14 +12,22 @@
 #define REPORTPUBLISHER
 
 #include <QObject>
+#include <QString>
 
 class ReportPublisher : public QObject {
     Q_OBJECT
 
 public:
-    ReportPublisher(QObject* parent = 0);
+    ReportPublisher(QString minidumpFilePath, QString crashedExecutablePath, QObject* parent = 0);
 
     Q_INVOKABLE void submit();
+
+private:
+
+    bool prepareReportFiles(QString reportDirPath);
+
+    QString m_minidumpFilePath;
+    QString m_crashedExecutablePath;
 };
 
 
