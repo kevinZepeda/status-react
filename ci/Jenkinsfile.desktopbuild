@@ -223,6 +223,12 @@ timeout(90) {
 
                 sh "ldd ${packageFolder}/AppDir/usr/bin/StatusIm"
                 sh """
+                  ./linuxdeployqt-continuous-x86_64.AppImage  \\
+                  ${packageFolder}/AppDir/usr/share/applications/ReportApp.desktop \\
+                  -verbose=3 -always-overwrite -no-strip -no-translations -qmake=${qt_bin}/qmake \\
+                  -qmldir='${workspace}/desktop/breakpad/reportApp'
+                """
+                sh """
                   ./linuxdeployqt-continuous-x86_64.AppImage \\
                     ${packageFolder}/AppDir/usr/share/applications/StatusIm.desktop \\
                     -verbose=3 -always-overwrite -no-strip \\
@@ -230,11 +236,6 @@ timeout(90) {
                     -qmake=${qt_bin}/qmake \\
                     -extra-plugins=imageformats/libqsvg.so \\
                     -qmldir='${workspace}/node_modules/react-native'
-                """
-                sh """
-                  ./linuxdeployqt-continuous-x86_64.AppImage  \\
-                  ${packageFolder}/AppDir/usr/share/applications/ReportApp.desktop \\
-                  -verbose=3 -always-overwrite -no-strip -no-translations -qmake=${qt_bin}/qmake
                 """
                 dir(packageFolder) {
                   sh 'ldd AppDir/usr/bin/StatusIm'
