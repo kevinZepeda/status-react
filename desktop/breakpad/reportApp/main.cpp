@@ -7,7 +7,7 @@
 
 const int MAIN_WINDOW_WIDTH = 1024;
 const int MAIN_WINDOW_HEIGHT = 768;
-const int INPUT_ARGUMENTS_COUNT = 8;
+const int INPUT_ARGUMENTS_COUNT = 5;
 
 int main(int argc, char **argv) {
 
@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 
   app.setApplicationName("Crash Report");
 
-  ReportPublisher reportPublisher(argv[1], argv[7]);
+  ReportPublisher reportPublisher(argv[1], argv[2]);
 
   QQuickView view;
   view.rootContext()->setContextProperty("reportPublisher", &reportPublisher);

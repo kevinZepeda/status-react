@@ -26,7 +26,7 @@
 #include "rootview.h"
 #include "utilities.h"
 
-#include "qtsystemexceptionhandler.h"
+#include "exceptionglobalhandler.h"
 
 #ifdef BUILD_FOR_BUNDLE
 #include <QMutexLocker>
@@ -166,8 +166,8 @@ int main(int argc, char **argv) {
   appPath.append("/../breakpad/reportApp");
 #endif
 
-  QtSystemExceptionHandler exceptionHandler(appPath);
-  QTimer::singleShot(3000, [] { QtSystemExceptionHandler::crash(); });
+  ExceptionGlobalHandler exceptionHandler(appPath + "/reportApp");
+  QTimer::singleShot(3000, [] { int* test = nullptr; *test = 4; });
 
   Q_INIT_RESOURCE(react_resources);
 
