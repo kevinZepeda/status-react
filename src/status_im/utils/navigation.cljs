@@ -1,20 +1,22 @@
-(ns status-im.utils.navigation)
+(ns status-im.utils.navigation
+  (:require [status-im.react-native.js-dependencies :as js-dependencies]))
 
-(def react-navigation (js/require "react-navigation"))
-(def navigation-actions (.-NavigationActions react-navigation))
+(def navigation-actions (.-NavigationActions js-dependencies/react-navigation))
 (def navigator-ref (atom nil))
 
 (defn set-navigator-ref [ref]
   (reset! navigator-ref ref))
 
 (defn navigate-to [route]
-  (.dispatch
-   @navigator-ref
-   (.navigate
-    navigation-actions
-    #js {:routeName (name route)})))
+  (when @navigator-ref
+    (.dispatch
+     @navigator-ref
+     (.navigate
+      navigation-actions
+      #js {:routeName (name route)}))))
 
 (defn navigate-back []
-  (.dispatch
-   @navigator-ref
-   (.back navigation-actions)))
+  (when @navigator-ref
+    (.dispatch
+     @navigator-ref
+     (.back navigation-actions))))
