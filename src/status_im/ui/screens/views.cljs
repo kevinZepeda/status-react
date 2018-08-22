@@ -51,7 +51,64 @@
             [status-im.ui.screens.intro.views :refer [intro]]
             [status-im.ui.screens.accounts.create.views :refer [create-account]]
             [status-im.ui.screens.profile.seed.views :refer [backup-seed]]
-            [status-im.ui.screens.about-app.views :as about-app]))
+            [status-im.ui.screens.about-app.views :as about-app]
+            [status-im.utils.navigation :as navigation]
+            [reagent.core :as reagent]
+            [cljs-react-navigation.reagent :as nav-reagent]))
+
+(def get-main-component2
+  (nav-reagent/switch-navigator
+   {:intro-login-stack
+    {:screen
+     (nav-reagent/stack-navigator
+      {:intro          {:screen (nav-reagent/stack-screen intro)}
+       :create-account {:screen (nav-reagent/stack-screen create-account)}
+       :recover        {:screen (nav-reagent/stack-screen recover)}
+       :login          {:screen (nav-reagent/stack-screen login)}
+       :accounts       {:screen (nav-reagent/stack-screen accounts)}}
+      {:initialRouteName "intro"
+       :headerMode       "none"})}
+    :chat-stack
+    {:screen
+     (nav-reagent/stack-navigator
+      {:main-stack
+       {:screen
+        (nav-reagent/stack-navigator
+         {:home            {:screen (nav-reagent/stack-screen main-tabs)}
+          :chat            {:screen (nav-reagent/stack-screen chat)}
+          :new             {:screen (nav-reagent/stack-screen add-new)}
+          :new-chat        {:screen (nav-reagent/stack-screen new-chat)}
+          :new-public-chat {:screen (nav-reagent/stack-screen new-public-chat)}
+          :open-dapp       {:screen (nav-reagent/stack-screen open-dapp)}
+          :browser         {:screen (nav-reagent/stack-screen browser)}}
+         {:headerMode       "none"
+          :initialRouteName "home"})}
+       :wallet-modal
+       {:screen (nav-reagent/stack-screen wallet.main/wallet-modal)}}
+      {:mode             "modal"
+       :headerMode       "none"
+       :initialRouteName "main-stack"})}
+    :wallet
+    {:screen (reagent/reactify-component main-tabs)}
+    :profile
+    {:screen
+     (nav-reagent/stack-navigator
+      {:main-stack
+       {:screen
+        (nav-reagent/stack-navigator
+         {:my-profile        {:screen (nav-reagent/stack-screen main-tabs)}
+          :about-app         {:screen (nav-reagent/stack-screen about-app/about-app)}
+          :help-center       {:screen (nav-reagent/stack-screen help-center)}
+          :currency-settings {:screen (nav-reagent/stack-screen currency-settings)}
+          :backup-seed       {:screen (nav-reagent/stack-screen backup-seed)}}
+         {:headerMode       "none"
+          :initialRouteName "my-profile"})}
+       :profile-qr-viewer
+       {:screen (nav-reagent/stack-screen profile.user/qr-viewer)}}
+      {:mode             "modal"
+       :headerMode       "none"
+       :initialRouteName "main-stack"})}}
+   {:initialRouteName "intro-login-stack"}))
 
 (defn get-main-component [view-id]
   (case view-id
@@ -137,13 +194,15 @@
            [component]])]])))
 
 (defview main []
-  (letsubs [view-id [:get :view-id]]
+  (letsubs []
     {:component-did-mount    utils.universal-links/initialize
      :component-will-unmount utils.universal-links/finalize
      :component-will-update  (fn [] (react/dismiss-keyboard!))}
-    (when view-id
-      (let [component        (get-main-component view-id)
-            main-screen-view (create-main-screen-view view-id)]
-        [main-screen-view common-styles/flex
-         [component]
-         [main-modal]]))))
+    [:> get-main-component2
+     {:ref navigation/set-navigator-ref}]
+    #_(when view-id
+        (let [component        (get-main-component view-id)
+              main-screen-view (create-main-screen-view view-id)]
+          [main-screen-view common-styles/flex
+           [component]
+           [main-modal]]))))

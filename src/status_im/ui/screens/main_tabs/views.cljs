@@ -72,9 +72,12 @@
      [react/view common.styles/main-container
 
       (case view-id
-        :home [home/home]
+        (:home :chat :new :new-chat :new-public-chat :open-dapp :browser)
+        [home/home]
         :wallet [wallet.main/wallet]
-        :my-profile [profile.user/my-profile])
+        (:my-profile :about-app :profile-qr-viewer :backup-seed)
+        [profile.user/my-profile]
+        nil)
 
       (when tab-bar-visible?
         [tabs view-id])]]))

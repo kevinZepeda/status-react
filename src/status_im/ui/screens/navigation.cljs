@@ -1,7 +1,8 @@
 (ns status-im.ui.screens.navigation
   (:require [re-frame.core :as re-frame]
             [status-im.utils.handlers :as handlers]
-            [status-im.utils.handlers-macro :as handlers-macro]))
+            [status-im.utils.handlers-macro :as handlers-macro]
+            [status-im.utils.navigation :as navigation]))
 
 ;; private helper fns
 
@@ -26,7 +27,8 @@
    (let [db (cond-> (assoc db :navigation-stack (list))
               (seq screen-params)
               (assoc-in [:navigation/screen-params view-id] screen-params))]
-     {:db (push-view db view-id)})))
+     {:db           (push-view db view-id)
+      ::navigate-to view-id})))
 
 (defn replace-view [view-id {:keys [db]}]
   {:db (-> (update db :navigation-stack replace-top-element view-id)
@@ -52,19 +54,20 @@
 
 (defn navigate-to-cofx [go-to-view-id screen-params {:keys [db]}]
   (let [view-id (:view-id db)
-        db (cond-> db
-             (seq screen-params)
-             (assoc-in [:navigation/screen-params go-to-view-id] screen-params))]
-    {:db (if (= view-id go-to-view-id)
-           db
-           (push-view db go-to-view-id))}))
+        db      (cond-> db
+                  (seq screen-params)
+                  (assoc-in [:navigation/screen-params go-to-view-id] screen-params))]
+    {:db           (if (= view-id go-to-view-id)
+                     db
+                     (push-view db go-to-view-id))
+     ::navigate-to go-to-view-id}))
 
 (defn navigate-to
   "DEPRECATED, use navigate-to-cofx above.
   Navigates to particular view"
   ([db go-to-view-id]
    (navigate-to db go-to-view-id nil))
-  ([{:keys [view-id] :as db} go-to-view-id screen-params]
+  ([db go-to-view-id screen-params]
    (:db (navigate-to-cofx go-to-view-id screen-params {:db db}))))
 
 (def unload-data-interceptor
@@ -78,13 +81,25 @@
 (def navigation-interceptors
   [unload-data-interceptor (re-frame/enrich preload-data!)])
 
+;; effects
+
+(re-frame/reg-fx
+ ::navigate-to
+ (fn [view-id]
+   (navigation/navigate-to (name view-id))))
+
+(re-frame/reg-fx
+ ::navigate-back
+ (fn []
+   (navigation/navigate-back)))
+
 ;; event handlers
 
-(handlers/register-handler-db
+(handlers/register-handler-fx
  :navigate-to
  navigation-interceptors
- (fn [db [_ & params]]
-   (apply navigate-to db params)))
+ (fn [cofx [_ & [go-to-view-id screen-params]]]
+   (navigate-to-cofx go-to-view-id screen-params cofx)))
 
 (handlers/register-handler-db
  :navigate-to-modal
@@ -113,11 +128,13 @@
             (assoc :navigation-stack navigation-stack'))
         (assoc db :view-id first-in-stack)))))
 
-(handlers/register-handler-db
+(handlers/register-handler-fx
  :navigate-back
  (re-frame/enrich -preload-data!)
- (fn [db _]
-   (navigate-back db)))
+ (fn [{:keys [db]} _]
+   (let [{:keys [view-id] :as new-id} (navigate-back db)]
+     {:db           (navigate-back new-id)
+      ::navigate-to view-id})))
 
 (handlers/register-handler-fx
  :navigate-to-clean
