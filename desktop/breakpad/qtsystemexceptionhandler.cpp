@@ -90,7 +90,7 @@ static bool exceptionHandlerCallback(const char *dump_dir,
   qWarning() << "[execute crash handler]"
              << QtSystemExceptionHandler::crashHandlerPath();
   qWarning() << argumentList;
-  QProcess::execute(QtSystemExceptionHandler::crashHandlerPath(),
+  QProcess::startDetached(QtSystemExceptionHandler::crashHandlerPath(),
                             argumentList);
 
   return true;

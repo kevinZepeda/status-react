@@ -224,7 +224,7 @@ timeout(90) {
                 sh "ldd ${packageFolder}/AppDir/usr/bin/StatusIm"
                 sh """
                   ./linuxdeployqt-continuous-x86_64.AppImage  \\
-                  ${packageFolder}/AppDir/usr/share/applications/ReportApp.desktop \\
+                  ${packageFolder}/AppDir/usr/bin/reportApp \\
                   -verbose=3 -always-overwrite -no-strip -no-translations -qmake=${qt_bin}/qmake \\
                   -qmldir='${workspace}/desktop/breakpad/reportApp'
                 """

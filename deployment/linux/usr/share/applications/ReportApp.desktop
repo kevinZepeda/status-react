@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=ReportApp
-Comment=Crash Report tool
-Exec=reportApp
-Icon=StatusIm
-Categories=Network;
