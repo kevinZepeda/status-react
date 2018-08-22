@@ -15,7 +15,7 @@
 (def content-type-emoji "emoji")
 
 (def desktop-content-types
-  [text-content-type content-type-emoji])
+  #{text-content-type content-type-emoji})
 
 (def command-send "send")
 (def command-request "request")
