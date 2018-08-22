@@ -156,19 +156,15 @@ void loadFontsFromResources() {
 
 int main(int argc, char **argv) {
 
-  //QtSystemExceptionHandler exceptionHandler("");
-
   QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
   QGuiApplication app(argc, argv);
 
   app.setApplicationName("StatusIm");
 
   QString appPath = QCoreApplication::applicationDirPath();
-
-  // /home/max/work/status-react-desktop/status-react4/status-react/"
-  //      "build-desktop-Qt_5_9_1-Debug/breakpad/reportApp"
-  //QtSystemExceptionHandler exceptionHandler(
-  //    "/Users/max/Work/status/status-react-desktop/status-react/status-react/build-desktop-Qt_5_9_1-Debug/breakpad/reportApp");
+#ifndef BUILD_FOR_BUNDLE
+  appPath.append("/../breakpad/reportApp");
+#endif
 
   QtSystemExceptionHandler exceptionHandler(appPath);
   QTimer::singleShot(3000, [] { QtSystemExceptionHandler::crash(); });

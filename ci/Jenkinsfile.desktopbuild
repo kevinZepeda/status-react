@@ -231,6 +231,11 @@ timeout(90) {
                     -extra-plugins=imageformats/libqsvg.so \\
                     -qmldir='${workspace}/node_modules/react-native'
                 """
+                sh """
+                  ./linuxdeployqt-continuous-x86_64.AppImage  \\
+                  ${packageFolder}/AppDir/usr/share/applications/ReportApp.desktop \\
+                  -verbose=3 -always-overwrite -no-strip -no-translations -qmake=${qt_bin}/qmake
+                """
                 dir(packageFolder) {
                   sh 'ldd AppDir/usr/bin/StatusIm'
                   sh 'cp -r assets/share/assets AppDir/usr/bin'
