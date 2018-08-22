@@ -124,7 +124,7 @@
   (if (= type :datemark)
     ^{:key (str "datemark" message-id)}
     [message.datemark/chat-datemark value]
-    (when (some #{content-type} [constants/text-content-type constants/content-type-emoji])
+    (when (some #{content-type} constants/desktop-content-types)
       (reagent.core/create-class
        {:component-did-mount
         #(when (and message-id
