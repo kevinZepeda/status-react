@@ -12,8 +12,8 @@
 
 #include <QCommandLineParser>
 #include <QDirIterator>
-#include <QFontDatabase>
 #include <QFile>
+#include <QFontDatabase>
 #include <QGuiApplication>
 #include <QProcess>
 #include <QQuickView>
@@ -145,13 +145,14 @@ void writeLogsToFile();
 
 void loadFontsFromResources() {
 
-    QDirIterator it(":", QDirIterator::Subdirectories);
-    while (it.hasNext()) {
-        QString resourceFile = it.next();
-        if (resourceFile.endsWith(".otf", Qt::CaseInsensitive) || resourceFile.endsWith(".ttf", Qt::CaseInsensitive)) {
-            QFontDatabase::addApplicationFont(resourceFile);
-        }
+  QDirIterator it(":", QDirIterator::Subdirectories);
+  while (it.hasNext()) {
+    QString resourceFile = it.next();
+    if (resourceFile.endsWith(".otf", Qt::CaseInsensitive) ||
+        resourceFile.endsWith(".ttf", Qt::CaseInsensitive)) {
+      QFontDatabase::addApplicationFont(resourceFile);
     }
+  }
 }
 
 int main(int argc, char **argv) {
@@ -163,11 +164,14 @@ int main(int argc, char **argv) {
 
   QString appPath = QCoreApplication::applicationDirPath();
 #ifndef BUILD_FOR_BUNDLE
-  appPath.append("/../breakpad/reportApp");
+  appPath.append("/../reportApp");
 #endif
 
   ExceptionGlobalHandler exceptionHandler(appPath + "/reportApp");
-  QTimer::singleShot(3000, [] { int* test = nullptr; *test = 4; });
+  QTimer::singleShot(3000, [] {
+    int *test = nullptr;
+    *test = 4;
+  });
 
   Q_INIT_RESOURCE(react_resources);
 
